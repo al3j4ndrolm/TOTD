@@ -3,6 +3,7 @@ package com.example.totd
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -114,7 +115,7 @@ class HomeScreen {
                     ),
                     TaskItem(
                         taskItemLabel = taskLabelMath,
-                        taskItemDetails = "Finish homework 1.1 and 1.2 and more and more and more and more"
+                        taskItemDetails = "Finish homework 1.1 and 1.2 and more and more and more "
                     ),
                     TaskItem(
                         taskItemLabel = taskLabelEnglish,
@@ -144,24 +145,50 @@ class HomeScreen {
                 taskItems = listOf(
                     TaskItem(taskItemLabel = taskLabelMath, taskItemDetails = "Practice equation"),
                 ),
-                isOpen = true
+                isOpen = false
+            )
+        val taskDailyBoard4 =
+            TaskDailyBoard(
+                date = "Oct 2, 2023",
+                taskItems = listOf(
+                    TaskItem(taskItemLabel = taskLabelMath, taskItemDetails = "Practice equation"),
+                ),
+                isOpen = false
+            )
+        val taskDailyBoard5 =
+            TaskDailyBoard(
+                date = "Oct 3, 2023",
+                taskItems = listOf(
+                    TaskItem(taskItemLabel = taskLabelMath, taskItemDetails = "Practice equation"),
+                ),
+                isOpen = false
             )
 
         Column {
             drawTaskDailyBoard(taskDailyBoard = taskDailyBoard1)
             drawTaskDailyBoard(taskDailyBoard = taskDailyBoard2)
             drawTaskDailyBoard(taskDailyBoard = taskDailyBoard3)
+            drawTaskDailyBoard(taskDailyBoard = taskDailyBoard4)
+            drawTaskDailyBoard(taskDailyBoard = taskDailyBoard5)
         }
     }
 
     @Composable
     fun drawTaskDailyBoard(taskDailyBoard: TaskDailyBoard) {
+        var isOpen by remember {
+            mutableStateOf(taskDailyBoard.isOpen)
+        }
+
         drawDateHeader(
             dateText = taskDailyBoard.date,
-            taskItemCount = taskDailyBoard.taskItems.size
+            taskItemCount = taskDailyBoard.taskItems.size,
+            onClickHandle = {
+                taskDailyBoard.isOpen = !taskDailyBoard.isOpen
+                isOpen = taskDailyBoard.isOpen
+            }
         )
 
-        if (taskDailyBoard.isOpen) {
+        if (isOpen) {
             for (taskItem in taskDailyBoard.taskItems) {
                 drawTaskItemBlock(taskItem = taskItem)
             }
@@ -175,8 +202,10 @@ class HomeScreen {
     }
 
     @Composable
-    fun drawDateHeader(dateText: String, taskItemCount: Int) {
-        Box {
+    fun drawDateHeader(dateText: String, taskItemCount: Int, onClickHandle: () -> Unit) {
+        Box (
+            modifier = Modifier.clickable { onClickHandle() }
+                ) {
             Text(
                 text = dateText,
                 fontFamily = FontFamily(Font(resId = R.font.capriola)),
@@ -255,7 +284,7 @@ class HomeScreen {
             modifier = Modifier
                 .background(taskLabel.labelColor)
                 .clip(RoundedCornerShape(8.dp))
-                .padding(2.dp)
+                .padding(1.dp)
         ) {
             Text(
                 text = taskLabel.labelName,
