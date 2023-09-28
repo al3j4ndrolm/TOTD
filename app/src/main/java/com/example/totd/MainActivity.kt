@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen.create().launch()
+                    HomeScreen.create().Launch()
                 }
             }
         }
@@ -32,6 +32,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     TOTDTheme {
-        HomeScreen.create().launch()
+        HomeScreen.create().Launch()
     }
 }

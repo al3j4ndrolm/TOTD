@@ -40,16 +40,18 @@ import androidx.compose.ui.unit.sp
 
 
 class HomeScreen {
+    private val taskDailyBoards: MutableList<TaskDailyBoard> = mutableListOf()
+
     @Composable
-    fun launch() {
+    fun Launch() {
         Column {
-            createHeader()
-            createTaskList()
+            DrawAppHeader()
+            DrawTaskBoard()
         }
     }
 
     @Composable
-    fun createHeader() {
+    fun DrawAppHeader() {
         Row(
             modifier = Modifier
                 .background(Color.Gray)
@@ -98,121 +100,61 @@ class HomeScreen {
     }
 
     @Composable
-    fun createTaskList() {
-
-        val taskLabelMath =
-            TaskLabel(labelName = "MATH 31", labelColor = Color.hsl(hue = 203f, 1.0f, .40f))
-        val taskLabelEnglish =
-            TaskLabel(labelName = "ESL 5", labelColor = Color.hsl(hue = 26f, 1.0f, .40f))
-
-        val taskDailyBoard1 =
-            TaskDailyBoard(
-                date = "Today",
-                taskItems = listOf(
-                    TaskItem(
-                        taskItemLabel = taskLabelMath,
-                        taskItemDetails = "Finish homework 1.1 and 1.2"
-                    ),
-                    TaskItem(
-                        taskItemLabel = taskLabelMath,
-                        taskItemDetails = "Finish homework 1.1 and 1.2 and more and more and more "
-                    ),
-                    TaskItem(
-                        taskItemLabel = taskLabelEnglish,
-                        taskItemDetails = "Write a story about my family in Venezuela"
-                    )
-                ),
-                isOpen = true
-            )
-        val taskDailyBoard2 =
-            TaskDailyBoard(
-                date = "Sep 27, 2023",
-                taskItems = listOf(
-                    TaskItem(
-                        taskItemLabel = taskLabelMath,
-                        taskItemDetails = "Finish homework 1.5"
-                    ),
-                    TaskItem(
-                        taskItemLabel = taskLabelEnglish,
-                        taskItemDetails = "Listen to podcast"
-                    )
-                ),
-                isOpen = true
-            )
-        val taskDailyBoard3 =
-            TaskDailyBoard(
-                date = "Sep 30, 2023",
-                taskItems = listOf(
-                    TaskItem(taskItemLabel = taskLabelMath, taskItemDetails = "Practice equation"),
-                ),
-                isOpen = false
-            )
-        val taskDailyBoard4 =
-            TaskDailyBoard(
-                date = "Oct 2, 2023",
-                taskItems = listOf(
-                    TaskItem(taskItemLabel = taskLabelMath, taskItemDetails = "Practice equation"),
-                ),
-                isOpen = false
-            )
-        val taskDailyBoard5 =
-            TaskDailyBoard(
-                date = "Oct 3, 2023",
-                taskItems = listOf(
-                    TaskItem(taskItemLabel = taskLabelMath, taskItemDetails = "Practice equation"),
-                ),
-                isOpen = false
-            )
-
+    fun DrawTaskBoard() {
         Column {
-            drawTaskDailyBoard(taskDailyBoard = taskDailyBoard1)
-            drawTaskDailyBoard(taskDailyBoard = taskDailyBoard2)
-            drawTaskDailyBoard(taskDailyBoard = taskDailyBoard3)
-            drawTaskDailyBoard(taskDailyBoard = taskDailyBoard4)
-            drawTaskDailyBoard(taskDailyBoard = taskDailyBoard5)
+            for (taskDailyBoard in taskDailyBoards) {
+                DrawTaskDailyBoard(taskDailyBoard = taskDailyBoard)
+            }
+            DrawNoTaskWarning()
         }
     }
 
     @Composable
-    fun drawTaskDailyBoard(taskDailyBoard: TaskDailyBoard) {
+    fun DrawNoTaskWarning() {
+        Text(text = "Oops! Theres no tasks yet!")
+    }
+
+    @Composable
+    fun DrawTaskDailyBoard(taskDailyBoard: TaskDailyBoard) {
         var isOpen by remember {
             mutableStateOf(taskDailyBoard.isOpen)
         }
-
-        drawDateHeader(
-            dateText = taskDailyBoard.date,
-            taskItemCount = taskDailyBoard.taskItems.filter { !it.isDone }.size,
-            onClickHandle = {
-                taskDailyBoard.isOpen = !taskDailyBoard.isOpen
-                isOpen = taskDailyBoard.isOpen
-            }
-        )
-
-        if (isOpen) {
-            for (taskItem in taskDailyBoard.taskItems) {
-                var isDone by remember {
-                    mutableStateOf(taskItem.isDone)
+        if (taskDailyBoard.hasActiveTasks()) {
+            DrawDateHeader(
+                dateText = taskDailyBoard.date,
+                taskItemCount = taskDailyBoard.getActiveTasksCount(),
+                onClickHandle = {
+                    taskDailyBoard.isOpen = !taskDailyBoard.isOpen
+                    isOpen = taskDailyBoard.isOpen
                 }
-
-                if (!isDone) {
-                    drawTaskItemBlock(taskItem = taskItem,
-                        onCheckHandle = {
-                            taskItem.isDone = true
-                            isDone = taskItem.isDone
-                        })
-                }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .size(2.dp)
-                    .fillMaxWidth()
             )
+
+            if (isOpen) {
+                for (taskItem in taskDailyBoard.taskItems) {
+                    var isDone by remember {
+                        mutableStateOf(taskItem.isDone)
+                    }
+
+                    if (!isDone) {
+                        DrawTaskItemBlock(taskItem = taskItem,
+                            onCheckHandle = {
+                                taskItem.isDone = true
+                                isDone = taskItem.isDone
+                            })
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(2.dp)
+                        .fillMaxWidth()
+                )
+            }
         }
     }
 
     @Composable
-    fun drawDateHeader(dateText: String, taskItemCount: Int, onClickHandle: () -> Unit) {
+    fun DrawDateHeader(dateText: String, taskItemCount: Int, onClickHandle: () -> Unit) {
         Box(
             modifier = Modifier.clickable { onClickHandle() }
         ) {
@@ -239,7 +181,7 @@ class HomeScreen {
     }
 
     @Composable
-    fun drawTaskItemBlock(taskItem: TaskItem, onCheckHandle: () -> Unit) {
+    fun DrawTaskItemBlock(taskItem: TaskItem, onCheckHandle: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -250,7 +192,7 @@ class HomeScreen {
                 modifier = Modifier.size(80.dp),
                 contentAlignment = Center
             ) {
-                drawTaskItemCheckbox(
+                DrawTaskItemCheckbox(
                     onCheckHandle = onCheckHandle
                 )
             }
@@ -261,7 +203,7 @@ class HomeScreen {
     }
 
     @Composable
-    fun drawTaskItemCheckbox(onCheckHandle: () -> Unit) {
+    fun DrawTaskItemCheckbox(onCheckHandle: () -> Unit) {
         var isChecked by remember { mutableStateOf(false) }
 
 
@@ -289,13 +231,13 @@ class HomeScreen {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            drawTaskLabel(taskLabel = taskItem.taskItemLabel)
+            DrawTaskLabel(taskLabel = taskItem.taskItemLabel)
             Text(text = taskItem.taskItemDetails, color = Color.DarkGray)
         }
     }
 
     @Composable
-    fun drawTaskLabel(taskLabel: TaskLabel) {
+    fun DrawTaskLabel(taskLabel: TaskLabel) {
         Box(
             modifier = Modifier
                 .background(taskLabel.labelColor)
@@ -312,7 +254,80 @@ class HomeScreen {
 
     companion object {
         fun create(): HomeScreen {
-            return HomeScreen()
+            val homeScreen = HomeScreen()
+            val taskLabelMath =
+                TaskLabel(labelName = "MATH 31", labelColor = Color.hsl(hue = 203f, 1.0f, .40f))
+            val taskLabelEnglish =
+                TaskLabel(labelName = "ESL 5", labelColor = Color.hsl(hue = 26f, 1.0f, .40f))
+
+
+            homeScreen.taskDailyBoards.addAll(
+                listOf(
+                    TaskDailyBoard(
+                        date = "Today",
+                        taskItems = listOf(
+                            TaskItem(
+                                taskItemLabel = taskLabelMath,
+                                taskItemDetails = "Finish homework 1.1 and 1.2"
+                            ),
+                            TaskItem(
+                                taskItemLabel = taskLabelMath,
+                                taskItemDetails = "Finish homework 1.1 and 1.2 and more and more and more "
+                            ),
+                            TaskItem(
+                                taskItemLabel = taskLabelEnglish,
+                                taskItemDetails = "Write a story about my family in Venezuela"
+                            )
+                        ),
+                        isOpen = true
+                    ),
+                    TaskDailyBoard(
+                        date = "Sep 27, 2023",
+                        taskItems = listOf(
+                            TaskItem(
+                                taskItemLabel = taskLabelMath,
+                                taskItemDetails = "Finish homework 1.5"
+                            ),
+                            TaskItem(
+                                taskItemLabel = taskLabelEnglish,
+                                taskItemDetails = "Listen to podcast"
+                            )
+                        ),
+                        isOpen = true
+                    ),
+                    TaskDailyBoard(
+                        date = "Sep 30, 2023",
+                        taskItems = listOf(
+                            TaskItem(
+                                taskItemLabel = taskLabelMath,
+                                taskItemDetails = "Practice equation"
+                            ),
+                        ),
+                        isOpen = false
+                    ),
+                    TaskDailyBoard(
+                        date = "Oct 2, 2023",
+                        taskItems = listOf(
+                            TaskItem(
+                                taskItemLabel = taskLabelMath,
+                                taskItemDetails = "Practice equation"
+                            ),
+                        ),
+                        isOpen = false
+                    ),
+                    TaskDailyBoard(
+                        date = "Oct 3, 2023",
+                        taskItems = listOf(
+                            TaskItem(
+                                taskItemLabel = taskLabelMath,
+                                taskItemDetails = "Practice equation"
+                            ),
+                        ),
+                        isOpen = false
+                    )
+                )
+            )
+            return homeScreen
         }
     }
 }
