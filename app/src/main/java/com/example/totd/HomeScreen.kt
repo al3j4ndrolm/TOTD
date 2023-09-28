@@ -181,7 +181,7 @@ class HomeScreen {
 
         drawDateHeader(
             dateText = taskDailyBoard.date,
-            taskItemCount = taskDailyBoard.taskItems.size,
+            taskItemCount = taskDailyBoard.taskItems.filter { !it.isDone }.size,
             onClickHandle = {
                 taskDailyBoard.isOpen = !taskDailyBoard.isOpen
                 isOpen = taskDailyBoard.isOpen
