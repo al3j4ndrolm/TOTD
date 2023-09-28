@@ -190,7 +190,17 @@ class HomeScreen {
 
         if (isOpen) {
             for (taskItem in taskDailyBoard.taskItems) {
-                drawTaskItemBlock(taskItem = taskItem)
+                var isDone by remember {
+                    mutableStateOf(taskItem.isDone)
+                }
+
+                if (!isDone) {
+                    drawTaskItemBlock(taskItem = taskItem,
+                        onCheckHandle = {
+                            taskItem.isDone = true
+                            isDone = taskItem.isDone
+                        })
+                }
             }
         } else {
             Box(
@@ -203,9 +213,9 @@ class HomeScreen {
 
     @Composable
     fun drawDateHeader(dateText: String, taskItemCount: Int, onClickHandle: () -> Unit) {
-        Box (
+        Box(
             modifier = Modifier.clickable { onClickHandle() }
-                ) {
+        ) {
             Text(
                 text = dateText,
                 fontFamily = FontFamily(Font(resId = R.font.capriola)),
@@ -229,7 +239,7 @@ class HomeScreen {
     }
 
     @Composable
-    fun drawTaskItemBlock(taskItem: TaskItem) {
+    fun drawTaskItemBlock(taskItem: TaskItem, onCheckHandle: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -240,7 +250,9 @@ class HomeScreen {
                 modifier = Modifier.size(80.dp),
                 contentAlignment = Center
             ) {
-                drawTaskItemCheckbox()
+                drawTaskItemCheckbox(
+                    onCheckHandle = onCheckHandle
+                )
             }
             Box(modifier = Modifier.fillMaxWidth()) {
                 drawTaskItemContent(taskItem)
@@ -249,12 +261,16 @@ class HomeScreen {
     }
 
     @Composable
-    fun drawTaskItemCheckbox() {
+    fun drawTaskItemCheckbox(onCheckHandle: () -> Unit) {
         var isChecked by remember { mutableStateOf(false) }
+
 
         Checkbox(
             checked = isChecked,
-            onCheckedChange = { isChecked = it },
+            onCheckedChange = {
+                isChecked = it
+                onCheckHandle()
+            },
             modifier = Modifier.padding(16.dp),
             colors = CheckboxDefaults.colors(
                 uncheckedColor = Color.Gray,
