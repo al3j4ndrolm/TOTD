@@ -40,7 +40,11 @@ import androidx.compose.ui.unit.sp
 
 
 class HomeScreen {
-    private val taskDailyBoards: MutableList<TaskDailyBoard> = mutableListOf()
+    private val totdData: TotdData = TotdData()
+
+    init {
+        totdData.addDummyData()
+    }
 
     @Composable
     fun Launch() {
@@ -102,7 +106,7 @@ class HomeScreen {
     @Composable
     fun DrawTaskBoard() {
         Column {
-            for (taskDailyBoard in taskDailyBoards) {
+            for (taskDailyBoard in totdData.taskDailyBoards) {
                 DrawTaskDailyBoard(taskDailyBoard = taskDailyBoard)
             }
             DrawNoTaskWarning()
@@ -248,101 +252,6 @@ class HomeScreen {
                 text = taskLabel.labelName,
                 color = Color.White
             )
-        }
-    }
-
-
-    companion object {
-        fun create(): HomeScreen {
-            val homeScreen = HomeScreen()
-            val taskLabelMath =
-                TaskLabel(labelName = "MATH 31", labelColor = Color.hsl(hue = 203f, 1.0f, .40f))
-            val taskLabelEnglish =
-                TaskLabel(labelName = "ESL 5", labelColor = Color.hsl(hue = 26f, 1.0f, .40f))
-            val taskLabelArts =
-                TaskLabel(labelName = "ARTS 1A", labelColor = Color.hsl(269f, 1.0f, .50f))
-
-            homeScreen.taskDailyBoards.addAll(
-                listOf(
-                    TaskDailyBoard(
-                        date = "Today",
-                        isOpen = true
-                    ),
-                    TaskDailyBoard(
-                        date = "Sep 27, 2023",
-                        isOpen = true
-                    ),
-                    TaskDailyBoard(
-                        date = "Sep 30, 2023",
-                        isOpen = false
-                    ),
-                    TaskDailyBoard(
-                        date = "Oct 2, 2023",
-                        isOpen = false
-                    ),
-                    TaskDailyBoard(
-                        date = "Oct 3, 2023",
-                        isOpen = false
-                    )
-                )
-            )
-
-            homeScreen.taskDailyBoards[0].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelMath,
-                    taskItemDetails = "Review Polynomial problems"
-                )
-            )
-            homeScreen.taskDailyBoards[0].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelMath,
-                    taskItemDetails = "Practice multiplication with YY"
-                )
-            )
-            homeScreen.taskDailyBoards[0].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelArts,
-                    taskItemDetails = "Analyze the 19th century art"
-                )
-            )
-            homeScreen.taskDailyBoards[0].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelEnglish,
-                    taskItemDetails = "Write an essay about the US immigration history"
-                )
-            )
-            homeScreen.taskDailyBoards[1].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelMath,
-                    taskItemDetails = "Finish homework for Range and Domain"
-                )
-            )
-            homeScreen.taskDailyBoards[1].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelArts,
-                    taskItemDetails = "Quiz - The art and the different types of expressions"
-                )
-            )
-            homeScreen.taskDailyBoards[2].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelEnglish,
-                    taskItemDetails = "Write and essay about the immigration in United States"
-                )
-            )
-            homeScreen.taskDailyBoards[2].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelEnglish,
-                    taskItemDetails = "Read the textbook (Page 23-34)"
-                )
-            )
-            homeScreen.taskDailyBoards[2].addNewTask(
-                taskItem = TaskItem(
-                    taskItemLabel = taskLabelEnglish,
-                    taskItemDetails = "Write the analysis about the textbook and submit the extra-credits"
-                )
-            )
-
-            return homeScreen
         }
     }
 }
