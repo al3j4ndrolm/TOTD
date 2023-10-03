@@ -142,7 +142,7 @@ class HomeScreen {
                     if (!isDone) {
                         DrawTaskItemBlock(taskItem = taskItem,
                             onCheckHandle = {
-                                taskItem.isDone = true
+                                taskItem.isDone = !taskItem.isDone
                                 isDone = taskItem.isDone
                             })
                     }
