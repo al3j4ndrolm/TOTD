@@ -235,23 +235,8 @@ class HomeScreen {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            DrawTaskLabel(taskLabel = taskItem.taskItemLabel)
+            taskItem.taskItemLabel.DrawTaskLabel()
             Text(text = taskItem.taskItemDetails, color = Color.DarkGray)
-        }
-    }
-
-    @Composable
-    fun DrawTaskLabel(taskLabel: TaskLabel) {
-        Box(
-            modifier = Modifier
-                .background(taskLabel.labelColor)
-                .clip(RoundedCornerShape(8.dp))
-                .padding(1.dp)
-        ) {
-            Text(
-                text = taskLabel.labelName,
-                color = Color.White
-            )
         }
     }
 }
