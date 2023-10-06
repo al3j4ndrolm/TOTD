@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -121,7 +123,27 @@ class HomeScreen {
 
     @Composable
     fun DrawNoTaskWarning() {
-        Text(text = "Oops! Theres no tasks yet!")
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.android_logo),
+                    contentDescription = "",
+                    alpha = 0.4f,
+                    modifier = Modifier.size(300.dp, 125.dp)
+                )
+                Text(
+                    text = "Oops! Theres no tasks yet!", color = Color.Gray,
+                    fontFamily = FontFamily(Font(resId = R.font.capriola)),
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(bottom = 100.dp)
+                )
+            }
+        }
+
+
     }
 
     @Composable
