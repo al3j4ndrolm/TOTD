@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Checkbox
@@ -28,7 +27,6 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -105,11 +103,19 @@ class HomeScreen {
 
     @Composable
     fun DrawTaskBoard() {
+        var hasActiveTask by remember {
+            mutableStateOf(totdData.taskDailyBoards.any { it.hasActiveTasks() })
+        }
         Column {
             for (taskDailyBoard in totdData.taskDailyBoards) {
-                DrawTaskDailyBoard(taskDailyBoard = taskDailyBoard)
+                DrawTaskDailyBoard(taskDailyBoard = taskDailyBoard,
+                    onCheckHandle = {
+                        hasActiveTask = totdData.taskDailyBoards.any { it.hasActiveTasks() }
+                    })
             }
-            DrawNoTaskWarning()
+            if (!hasActiveTask) {
+                DrawNoTaskWarning()
+            }
         }
     }
 
@@ -119,7 +125,7 @@ class HomeScreen {
     }
 
     @Composable
-    fun DrawTaskDailyBoard(taskDailyBoard: TaskDailyBoard) {
+    fun DrawTaskDailyBoard(taskDailyBoard: TaskDailyBoard, onCheckHandle: () -> Unit) {
         var isOpen by remember {
             mutableStateOf(taskDailyBoard.isOpen)
         }
@@ -144,6 +150,7 @@ class HomeScreen {
                             onCheckHandle = {
                                 taskItem.isDone = !taskItem.isDone
                                 isDone = taskItem.isDone
+                                onCheckHandle()
                             })
                     }
                 }
