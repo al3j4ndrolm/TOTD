@@ -26,11 +26,23 @@ import androidx.compose.ui.window.Dialog
 class TaskInfoScreen {
     @Composable
     fun Launch(taskItem: TaskItem) {
-        DialogWithImage(taskItem, {}, {})
+        var shouldLaunch by remember {
+            mutableStateOf(true)
+        }
+
+        if (shouldLaunch) {
+            DialogWithImage(
+                taskItem = taskItem,
+                onDismissRequest = {
+                                   shouldLaunch = false
+                },
+                onConfirmation = {}
+            )
+        }
     }
 
     @Composable
-    fun DialogWithImage(
+    private fun DialogWithImage(
         taskItem: TaskItem,
         onDismissRequest: () -> Unit,
         onConfirmation: () -> Unit,
@@ -76,7 +88,7 @@ class TaskInfoScreen {
     }
 
     @Composable
-    fun DrawTaskInfo(taskItem: TaskItem) {
+    private fun DrawTaskInfo(taskItem: TaskItem) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,14 +116,14 @@ class TaskInfoScreen {
                 )
                 taskItem.taskItemLabel.DrawTaskLabel()
             }
-            DrawTaskDetailsTextField()
+            DrawTaskDetailsTextField(taskItem)
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun DrawTaskDetailsTextField() {
-        var text by remember { mutableStateOf("Blah blah lala bi ba bu") }
+    private fun DrawTaskDetailsTextField(taskItem: TaskItem) {
+        var text by remember { mutableStateOf(taskItem.taskItemDetails) }
 
         OutlinedTextField(
             value = text,

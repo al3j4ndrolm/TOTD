@@ -40,7 +40,8 @@ import androidx.compose.ui.unit.sp
 
 
 class HomeScreen {
-    private val totdData: TotdData = TotdData()
+    val totdData: TotdData = TotdData()
+    val taskInfoScreen: TaskInfoScreen = TaskInfoScreen()
 
     init {
         totdData.addDummyData()
@@ -215,6 +216,10 @@ class HomeScreen {
 
     @Composable
     fun DrawTaskItemBlock(taskItem: TaskItem, onCheckHandle: () -> Unit) {
+        var shouldLaunchTaskInfoScreen by remember {
+            mutableStateOf(false)
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -229,9 +234,19 @@ class HomeScreen {
                     onCheckHandle = onCheckHandle
                 )
             }
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        shouldLaunchTaskInfoScreen = true
+                    },
+            ) {
                 DrawTaskItemContent(taskItem)
             }
+        }
+
+        if (shouldLaunchTaskInfoScreen) {
+            taskInfoScreen.Launch(taskItem = taskItem)
         }
     }
 
