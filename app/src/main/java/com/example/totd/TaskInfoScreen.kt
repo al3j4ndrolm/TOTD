@@ -33,9 +33,7 @@ class TaskInfoScreen {
         if (shouldLaunch) {
             DialogWithImage(
                 taskItem = taskItem,
-                onDismissRequest = {
-                                   shouldLaunch = false
-                },
+                onDismissRequest = { shouldLaunch = false },
                 onConfirmation = {}
             )
         }

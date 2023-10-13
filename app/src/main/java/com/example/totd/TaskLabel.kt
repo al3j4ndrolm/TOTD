@@ -30,6 +30,5 @@ data class TaskLabel(
         }
     }
 
-    companion object {
-    }
+    companion object
 }
