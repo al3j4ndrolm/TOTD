@@ -25,18 +25,12 @@ import androidx.compose.ui.window.Dialog
 
 class TaskInfoScreen {
     @Composable
-    fun Launch(taskItem: TaskItem) {
-        var shouldLaunch by remember {
-            mutableStateOf(true)
-        }
-
-        if (shouldLaunch) {
+    fun Launch(taskItem: TaskItem, onDismissRequest: () -> Unit) {
             DialogWithImage(
                 taskItem = taskItem,
-                onDismissRequest = { shouldLaunch = false },
+                onDismissRequest = { onDismissRequest() },
                 onConfirmation = {}
             )
-        }
     }
 
     @Composable
