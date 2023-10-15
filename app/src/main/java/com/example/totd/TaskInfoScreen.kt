@@ -25,11 +25,12 @@ import androidx.compose.ui.window.Dialog
 
 class TaskInfoScreen {
     @Composable
-    fun Launch(taskItem: TaskItem, onDismissRequest: () -> Unit) {
+    fun Launch(taskItem: TaskItem, onDismissRequest: () -> Unit, onDeleteTaskItem: () -> Unit) {
             DialogWithImage(
                 taskItem = taskItem,
                 onDismissRequest = { onDismissRequest() },
-                onConfirmation = {}
+                onConfirmation = {},
+                onDeleteTaskItem = { onDeleteTaskItem()}
             )
     }
 
@@ -38,6 +39,7 @@ class TaskInfoScreen {
         taskItem: TaskItem,
         onDismissRequest: () -> Unit,
         onConfirmation: () -> Unit,
+        onDeleteTaskItem: () -> Unit
     ) {
         Dialog(onDismissRequest = { onDismissRequest() }) {
             // Draw a rectangle shape with rounded corners inside the dialog
@@ -62,10 +64,13 @@ class TaskInfoScreen {
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         TextButton(
-                            onClick = { onDismissRequest() },
+                            onClick = {
+                                onDismissRequest()
+                                onDeleteTaskItem()
+                                      },
                             modifier = Modifier.padding(8.dp),
                         ) {
-                            Text("Dismiss")
+                            Text("Delete")
                         }
                         TextButton(
                             onClick = { onConfirmation() },

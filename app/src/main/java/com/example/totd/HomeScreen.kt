@@ -106,17 +106,18 @@ class HomeScreen {
 
     @Composable
     fun DrawTaskBoard() {
-        var hasActiveTask by remember {
+        var hasAnyActiveTask by remember {
             mutableStateOf(totdData.taskDailyBoards.any { it.hasActiveTasks() })
         }
         Column {
             for (taskDailyBoard in totdData.taskDailyBoards) {
-                DrawTaskDailyBoard(taskDailyBoard = taskDailyBoard,
-                    onCheckHandle = {
-                        hasActiveTask = totdData.taskDailyBoards.any { it.hasActiveTasks() }
+                DrawTaskDailyBoard(
+                    taskDailyBoard = taskDailyBoard,
+                    refreshNoTaskWarning = {
+                        hasAnyActiveTask = totdData.taskDailyBoards.any { it.hasActiveTasks() }
                     })
             }
-            if (!hasActiveTask) {
+            if (!hasAnyActiveTask) {
                 DrawNoTaskWarning()
             }
         }
@@ -148,11 +149,15 @@ class HomeScreen {
     }
 
     @Composable
-    fun DrawTaskDailyBoard(taskDailyBoard: TaskDailyBoard, onCheckHandle: () -> Unit) {
+    fun DrawTaskDailyBoard(taskDailyBoard: TaskDailyBoard, refreshNoTaskWarning: () -> Unit) {
         var isOpen by remember {
             mutableStateOf(taskDailyBoard.isOpen)
         }
-        if (taskDailyBoard.hasActiveTasks()) {
+        var activeTaskCount by remember {
+            mutableStateOf(taskDailyBoard.getActiveTasksCount())
+        }
+
+        if (activeTaskCount > 0) {
             DrawDateHeader(
                 dateText = taskDailyBoard.date,
                 taskItemCount = taskDailyBoard.getActiveTasksCount(),
@@ -164,16 +169,17 @@ class HomeScreen {
 
             if (isOpen) {
                 for (taskItem in taskDailyBoard.taskItems) {
-                    var isDone by remember {
-                        mutableStateOf(taskItem.isDone)
-                    }
-
-                    if (!isDone) {
+                    if (!taskItem.isDone) {
                         DrawTaskItemBlock(taskItem = taskItem,
                             onCheckHandle = {
                                 taskItem.isDone = !taskItem.isDone
-                                isDone = taskItem.isDone
-                                onCheckHandle()
+                                refreshNoTaskWarning()
+                                activeTaskCount = taskDailyBoard.getActiveTasksCount()
+                            },
+                            onDeleteTaskItem = {
+                                taskDailyBoard.taskItems.remove(taskItem)
+                                refreshNoTaskWarning()
+                                activeTaskCount = taskDailyBoard.getActiveTasksCount()
                             })
                     }
                 }
@@ -215,7 +221,11 @@ class HomeScreen {
     }
 
     @Composable
-    fun DrawTaskItemBlock(taskItem: TaskItem, onCheckHandle: () -> Unit) {
+    fun DrawTaskItemBlock(
+        taskItem: TaskItem,
+        onCheckHandle: () -> Unit,
+        onDeleteTaskItem: () -> Unit
+    ) {
         var shouldLaunchTaskInfoScreen by remember {
             mutableStateOf(false)
         }
@@ -246,9 +256,10 @@ class HomeScreen {
         }
 
         if (shouldLaunchTaskInfoScreen) {
-            taskInfoScreen.Launch(taskItem = taskItem, onDismissRequest = {
-                shouldLaunchTaskInfoScreen = false
-            })
+            taskInfoScreen.Launch(
+                taskItem = taskItem,
+                onDismissRequest = { shouldLaunchTaskInfoScreen = false },
+                onDeleteTaskItem = { onDeleteTaskItem() })
         }
     }
 
