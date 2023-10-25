@@ -25,23 +25,27 @@ import androidx.compose.ui.window.Dialog
 
 class TaskInfoScreen {
     @Composable
-    fun Launch(taskItem: TaskItem, onDismissRequest: () -> Unit, onDeleteTaskItem: () -> Unit) {
-            DialogWithImage(
-                taskItem = taskItem,
-                onDismissRequest = { onDismissRequest() },
-                onConfirmation = {},
-                onDeleteTaskItem = { onDeleteTaskItem()}
-            )
+    fun Launch(
+        taskItem: TaskItem,
+        onCloseTaskInfoScreen: () -> Unit,
+        onDeleteTaskItem: () -> Unit
+
+    ) {
+        DialogWithImage(
+            taskItem = taskItem,
+            onCloseTaskInfoScreen = { onCloseTaskInfoScreen() },
+            onDeleteTaskItem = { onDeleteTaskItem() }
+        )
+        taskItem.taskItemDetailsDraft = taskItem.taskItemDetails
     }
 
     @Composable
-    private fun DialogWithImage(
+    fun DialogWithImage(
         taskItem: TaskItem,
-        onDismissRequest: () -> Unit,
-        onConfirmation: () -> Unit,
+        onCloseTaskInfoScreen: () -> Unit,
         onDeleteTaskItem: () -> Unit
     ) {
-        Dialog(onDismissRequest = { onDismissRequest() }) {
+        Dialog(onDismissRequest = { onCloseTaskInfoScreen() }) {
             // Draw a rectangle shape with rounded corners inside the dialog
             Card(
                 modifier = Modifier
@@ -65,15 +69,18 @@ class TaskInfoScreen {
                     ) {
                         TextButton(
                             onClick = {
-                                onDismissRequest()
+                                onCloseTaskInfoScreen()
                                 onDeleteTaskItem()
-                                      },
+                            },
                             modifier = Modifier.padding(8.dp),
                         ) {
                             Text("Delete")
                         }
                         TextButton(
-                            onClick = { onConfirmation() },
+                            onClick = {
+                                onCloseTaskInfoScreen()
+                                taskItem.taskItemDetails = taskItem.taskItemDetailsDraft
+                            },
                             modifier = Modifier.padding(8.dp),
                         ) {
                             Text("Confirm")
@@ -85,7 +92,7 @@ class TaskInfoScreen {
     }
 
     @Composable
-    private fun DrawTaskInfo(taskItem: TaskItem) {
+    fun DrawTaskInfo(taskItem: TaskItem) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -119,12 +126,15 @@ class TaskInfoScreen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun DrawTaskDetailsTextField(taskItem: TaskItem) {
+    fun DrawTaskDetailsTextField(taskItem: TaskItem) {
         var text by remember { mutableStateOf(taskItem.taskItemDetails) }
 
         OutlinedTextField(
             value = text,
-            onValueChange = { text = it },
+            onValueChange = {
+                text = it
+                taskItem.taskItemDetailsDraft = text
+            },
             label = { Text("Details") }
         )
     }

@@ -258,7 +258,7 @@ class HomeScreen {
         if (shouldLaunchTaskInfoScreen) {
             taskInfoScreen.Launch(
                 taskItem = taskItem,
-                onDismissRequest = { shouldLaunchTaskInfoScreen = false },
+                onCloseTaskInfoScreen = { shouldLaunchTaskInfoScreen = false },
                 onDeleteTaskItem = { onDeleteTaskItem() })
         }
     }
